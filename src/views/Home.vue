@@ -43,7 +43,14 @@
 					<div class="d-flex justify-content-start align-items-center">
 						<div class="mr-3">
 							<img
+								v-if="online"
 								:src="lesson.image"
+								style="height: 100px; width: 100px; border-radius: 10px"
+								alt=""
+							/>
+							<img
+								v-else
+								:src="require('@/assets/logo.png')"
 								style="height: 100px; width: 100px; border-radius: 10px"
 								alt=""
 							/>
@@ -88,6 +95,9 @@ export default {
 	},
 	computed: {
 		...mapGetters(['lessons', 'cart']),
+		online() {
+			return window.navigator.onLine
+		},
 		computedLessons() {
 			if (this.sort && this.dir) {
 				switch (this.sort) {
