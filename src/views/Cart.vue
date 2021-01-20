@@ -15,7 +15,15 @@
 						<div class="d-flex justify-content-start align-items-center">
 							<div class="mr-3">
 								<img
+									v-if="online"
 									:src="lessons.find((e) => e._id === item.lesson).image"
+									style="height: 100px; width: 100px; border-radius: 10px"
+									alt=""
+								/>
+
+								<img
+									v-else
+									:src="require('@/assets/logo.png')"
 									style="height: 100px; width: 100px; border-radius: 10px"
 									alt=""
 								/>
@@ -122,6 +130,9 @@ export default {
 	},
 	computed: {
 		...mapGetters(['lessons', 'cart']),
+		online() {
+			return window.navigator.onLine
+		},
 		computeTotal() {
 			let total = 0
 			for (let item of this.cart) {
@@ -151,15 +162,21 @@ export default {
 		...mapMutations(['addToCart', 'clearLessons']),
 		checkoutBtn: async function() {
 			try {
-				let result = await place_order(
-					JSON.stringify({
-						contents: this.cart,
-						user: this.user,
-						total: this.computeTotal
-					})
-				)
+				if (this.online) {
+					let result = await place_order(
+						JSON.stringify({
+							contents: this.cart,
+							user: this.user,
+							total: this.computeTotal
+						})
+					)
 
-				this.$router.push('/confirmation')
+					this.$router.push('/confirmation')
+				} else {
+					alert(
+						'Your browser is offline. You may not be able to use this feature'
+					)
+				}
 			} catch (error) {
 				console.log(error.message)
 			}

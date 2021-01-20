@@ -9,7 +9,7 @@
 
 		<div class="row">
 			<div class="col-3">
-				<form class="mt-5 border p-5">
+				<form class="mt-5 border p-5" v-if="online">
 					<div class="form-group">
 						<label for="exampleFormControlInput1">Full Name</label>
 						<input
@@ -38,10 +38,13 @@
 						</button>
 					</div>
 				</form>
+				<div class="text-center">
+					Your browser is offline. This feature may not work offline
+				</div>
 			</div>
 			<div class="col-6">
 				<!-- checkout form here -->
-				<div class=" w-100 p-5 border">
+				<div class="w-100 p-5 border">
 					<div v-if="orders.length === 0">
 						Enter your name or phone number to fetch your orders
 					</div>
@@ -53,7 +56,7 @@
 							</span>
 						</p>
 						<div
-							class=" px-5 py-2 mb-2"
+							class="px-5 py-2 mb-2"
 							v-for="(item, i) of order.contents"
 							:key="i"
 						>
@@ -108,16 +111,22 @@ export default {
 			orders: []
 		}
 	},
-	computed: {},
+	computed: {
+		online() {
+			return window.navigator.onLine
+		}
+	},
 	methods: {
-		checkoutBtn: async function() {
+		checkoutBtn: async function () {
 			try {
-				let result = await fetch_orders(
-					JSON.stringify({
-						user: this.user
-					})
-				)
-				this.orders = result.orders
+				if (this.online) {
+					let result = await fetch_orders(
+						JSON.stringify({
+							user: this.user
+						})
+					)
+					this.orders = result.orders
+				}
 			} catch (error) {
 				console.log(error.message)
 			}
